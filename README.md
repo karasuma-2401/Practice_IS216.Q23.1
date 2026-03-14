@@ -4,7 +4,7 @@
 
 Các bài tập trong repository này được đóng góp bởi 5 thành viên:
 
-| STT | Họ và Tên | Vai trò / Nhiệm vụ chính | GitHub Profile |
+| STT | Họ và Tên |
 | :---: | :--- |
 | **1** | **Lê Minh Thắng** |
 | **2** | **Nguyễn Đăng Khánh** |
