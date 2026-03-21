@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Bai7 {
+public class Exercise7IV {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -25,5 +25,7 @@ public class Bai7 {
         } else {
             System.out.println(n + " không phải là số nguyên tố");
         }
+
+        sc.close();
     }
 }

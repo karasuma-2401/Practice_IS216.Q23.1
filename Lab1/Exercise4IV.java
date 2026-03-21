@@ -2,6 +2,10 @@ import java.util.Scanner;
 
 public class Exercise4IV {
     public static void main(String[] args) {
+        run();
+    }
+
+    public static void run() {
         Scanner scanIn = new Scanner(System.in);
         System.out.print("Nhap chuoi x: ");
         String x = scanIn.nextLine();

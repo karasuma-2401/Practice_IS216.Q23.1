@@ -14,18 +14,6 @@ public class Exercise6V {
             colPositions.add(c);
         }
 
-        // public int GetValue() {
-        //     return value;
-        // }
-
-        // public ArrayList<Integer> GetRowPositions() {
-        //     return rowPositions;
-        // }
-
-        // public ArrayList<Integer> GetColumnPositions() {
-        //     return colPositions;
-        // }
-
         public void SetNewValue(int val, int r, int c) {
             value = val;
             rowPositions.clear(); rowPositions.add(r);
@@ -77,12 +65,19 @@ public class Exercise6V {
         return max;
     }
 
+    private static boolean isPrime(int n) {
+        for (int i = 2; i*i <= n; i++) {
+            if (n % i == 0) return false;
+        }
+        return n > 1;
+    }
+
     public int[][] CreatePrimeArray(int n, int m) {
         int[][] primeArray = new int[n][m];
 
         for (int i = 0; i < Array.length; i++) {
             for (int j = 0; j < Array[0].length; j++) {
-                primeArray[i][j] = Exercise7IV.isPrime(Array[i][j]) ? Array[i][j] : 0;
+                primeArray[i][j] = isPrime(Array[i][j]) ? Array[i][j] : 0;
             }
         }
 

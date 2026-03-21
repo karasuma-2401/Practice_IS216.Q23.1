@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Bai6 {
+public class Exercise6IV {
 
     static Scanner sc = new Scanner(System.in);
 
@@ -22,19 +22,19 @@ public class Bai6 {
 
             switch (choice) {
                 case 1:
-                    Bai1.run();
+                    Exercise1IV.run();
                     break;
                 case 2:
-                    Bai2.run();
+                    Exercise2IV.run();
                     break;
                 case 3:
-                    Bai3.run(); 
+                    Exercise3IV.run(); 
                     break;
                 case 4:
-                    Bai4.run(); 
+                    Exercise4IV.run(); 
                     break;
                 case 5:
-                    Bai5.run(); 
+                    Exercise5IV.run(); 
                     break;
                 case 6:
                     System.out.println("Thoát chương trình");

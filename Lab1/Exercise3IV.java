@@ -2,6 +2,18 @@ import java.util.Scanner;
 
 public class Exercise3IV {
     public static void main(String[] args) {
+        run();
+    }
+
+    private static PhanSo nhapPhanSoTuConsole(Scanner sc) {
+        System.out.print("Nhap Tu So: ");
+        int tu = sc.nextInt();
+        System.out.print("Nhap Mau So: ");
+        int mau = sc.nextInt();
+        return new PhanSo(tu, mau);
+    }
+
+    public static void run() {
         Scanner sc = new Scanner(System.in);
 
         try {
@@ -25,14 +37,6 @@ public class Exercise3IV {
         } finally {
             sc.close();
         }
-    }
-
-    private static PhanSo nhapPhanSoTuConsole(Scanner sc) {
-        System.out.print("Nhap Tu So: ");
-        int tu = sc.nextInt();
-        System.out.print("Nhap Mau So: ");
-        int mau = sc.nextInt();
-        return new PhanSo(tu, mau);
     }
 }
 
