@@ -182,11 +182,9 @@ public class QuanLySieuThiABC {
         }
         
         System.out.print("Nhap so luong ban: ");
-        int soLuongBan = scanner.nextInt();
         scanner.nextLine();
         
         System.out.println("\nThong tin tinh toan:");
-        double tongCong = hang.tinhThanhTien(soLuongBan);
         System.out.println("Ma hang: " + hang.getMaHang() + " - Ten: " + hang.getTenHang());
     }
     

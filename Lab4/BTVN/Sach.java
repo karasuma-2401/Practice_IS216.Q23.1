@@ -1,6 +1,9 @@
 package Lab4.BTVN;
 
-public class Sach {
+import java.io.Serializable;
+
+public class Sach implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String maSach;
     private String tenSach;
     private String tacGia;

@@ -2,10 +2,7 @@ package Lab2.Exercise2V;
 public class TestQuanLySieuThi {
     public static void main(String[] args) {
         System.out.println("========== TEST QUAN LY SIEU THI ABC ==========");
-        
-        // Tao cac san pham mau
-        
-        // Hang dien may 1
+
         HangDienMay dienMay1 = new HangDienMay(
             "DM001", 
             "Laptop Dell XPS 13", 
@@ -83,11 +80,9 @@ public class TestQuanLySieuThi {
         // Test phuong thuc tinh thanh tien
         System.out.println("\n--- TEST TINH THANH TIEN ---");
         System.out.println("Mua 1 chiec Laptop Dell XPS 13:");
-        double tienDienMay = dienMay1.tinhThanhTien(1);
         System.out.println("So luong sau mua: " + dienMay1.getSoLuong());
         
         System.out.println("\nMua 2 goi sua tuoi:");
-        double tienThucPham = thucPham1.tinhThanhTien(2);
         System.out.println("So luong sau mua: " + thucPham1.getSoLuong());
         
         // Test phuong thuc danh gia muc do ban buon

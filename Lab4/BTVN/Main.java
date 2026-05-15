@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,8 +18,15 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class Main extends JFrame {
+    private final String FILE_NAME = "BTVN_Sach";
 
     private final String[] COLS = { "Mã sách", "Tên sách", "Tác giả", "NXB", "Giá" };
     private final DSSach dsSach = new DSSach();
@@ -34,7 +40,11 @@ public class Main extends JFrame {
         super("Chương trình quản lý sách");
         initComponents();
         initEvents();
-        initMockData();
+        
+        loadFromFile();
+        if (dsSach.tongSoSach() == 0) {
+            initMockData();
+        }
         syncTable();
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,6 +136,38 @@ public class Main extends JFrame {
         });
     }
 
+    private void saveToFile() {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+            oos.writeObject(dsSach.getDs());
+            oos.close();
+            JOptionPane.showMessageDialog(this, "Lưu file thành công!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi lưu file!");
+        }
+    }
+
+    private void loadFromFile() {
+        try {
+            File file = new File(FILE_NAME);
+
+            if (!file.exists()) {
+                return;
+            }
+
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME));
+
+            ArrayList<Sach> list = (ArrayList<Sach>) ois.readObject();
+
+            ois.close();
+            dsSach.getDs().clear();
+            dsSach.getDs().addAll(list);
+            syncTable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi đọc file!");
+        }
+    }
+
     private void onThem() {
         String ma = tfMa.getText().trim();
         String ten = tfTen.getText().trim();
@@ -159,46 +201,73 @@ public class Main extends JFrame {
             return;
         }
         String ma = tableModel.getValueAt(row, 0).toString();
-        if (dsSach.xoaSach(ma)) {
-            syncTable();
-            onClear();
+
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc chắn muốn xóa sách này không?",
+            "Xác nhận xóa",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            if (dsSach.xoaSach(ma)) {
+                syncTable();
+                onClear();
+                JOptionPane.showMessageDialog(this, "Xóa sách thành công!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy sách để xóa!");
+            }
         }
     }
 
     private void onSua() {
         int row = table.getSelectedRow();
+
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sách cần sửa!");
             return;
         }
-        tfMa.setEditable(false);
-    }
 
-    private void onLuu() {
         String ma = tfMa.getText().trim();
         String ten = tfTen.getText().trim();
         String tg = tfTacGia.getText().trim();
         String nxb = tfNxb.getText().trim();
         String giaStr = tfGia.getText().trim();
 
-        if (ma.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không có mã sách để cập nhật!");
+        if (ma.isEmpty() || ten.isEmpty() || tg.isEmpty() || nxb.isEmpty() || giaStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
 
         try {
             double gia = Double.parseDouble(giaStr);
-            Sach s = new Sach(ma, ten, tg, nxb, gia);
-            if (dsSach.capNhatSach(ma, s)) {
-                syncTable();
-                tfMa.setEditable(true);
-                onClear();
-            } else {
-                JOptionPane.showMessageDialog(this, "Không tìm thấy mã sách để cập nhật!");
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Bạn có chắc chắn muốn sửa sách này không?",
+                    "Xác nhận sửa",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                Sach s = new Sach(ma, ten, tg, nxb, gia);
+
+                if (dsSach.capNhatSach(ma, s)) {
+                    syncTable();
+                    JOptionPane.showMessageDialog(this, "Sửa sách thành công!");
+                    onClear();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không tìm thấy sách để sửa!");
+                }
             }
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Giá phải là số!");
         }
+    }
+
+    private void onLuu() {
+        saveToFile();
     }
 
     private void onTim() {
@@ -243,6 +312,8 @@ public class Main extends JFrame {
 
     private void initMockData() {
         dsSach.themSach(new Sach("MS01", "ABC", "Nguyễn A", "XYZ", 100000));
+        dsSach.themSach(new Sach("MS02", "Harry Potter", "JKR", "XYZ", 200000));
+        dsSach.themSach(new Sach("MS03", "Introduction of IT", "UIT", "UIT", 2000));
     }
 
     public static void main(String[] args) {

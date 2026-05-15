@@ -1,12 +1,9 @@
 package Lab2.Exercise2V;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class HangDienMay extends HangHoa {
     private String thuongHieu;
     private String loaiMay;
-    private int thoiGianBaoHanh; // tinh theo thang
+    private int thoiGianBaoHanh;
     
     public HangDienMay() {
         super();
