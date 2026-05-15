@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,53 +22,94 @@ import javax.swing.table.DefaultTableModel;
 
 public class Main extends JFrame {
 
-    private static final String[] COLS = { "Mã sách", "Tên sách", "Tác giả", "NXB", "Giá" };
-
+    private final String[] COLS = { "Mã sách", "Tên sách", "Tác giả", "NXB", "Giá" };
     private final DSSach dsSach = new DSSach();
-    private final DefaultTableModel tableModel = new DefaultTableModel(COLS, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
+    private DefaultTableModel tableModel;
+    private JTable table;
 
-    private final JTextField tfMa = new JTextField(12);
-    private final JTextField tfTen = new JTextField(12);
-    private final JTextField tfGia = new JTextField(12);
-    private final JTextField tfTacGia = new JTextField(12);
-    private final JTextField tfNxb = new JTextField(12);
-    private final JTable table = new JTable(tableModel);
+    private JTextField tfMa, tfTen, tfGia, tfTacGia, tfNxb;
+    private JButton btThem, btXoa, btSua, btLuu, btTim, btClear, btThoat;
 
     public Main() {
         super("Chương trình quản lý sách");
-        dsSach.ds = new ArrayList<>();
+        initComponents();
+        initEvents();
         initMockData();
+        syncTable();
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(800, 500));
+        pack();
+        setLocationRelativeTo(null);
+    }
 
-        JLabel header = new JLabel("Thông tin sách", JLabel.CENTER);
-        header.setFont(new Font(header.getFont().getName(), Font.BOLD, 18));
+    private void initComponents() {
+        setLayout(new BorderLayout(10, 10));
 
-        JPanel form = buildFormPanel();
+        JLabel lbTitle = new JLabel("Thông tin sách", JLabel.CENTER);
+        lbTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        add(lbTitle, BorderLayout.NORTH);
 
-        table.setFillsViewportHeight(true);
+        JPanel pnForm = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        tfMa = new JTextField(20);
+        tfTen = new JTextField(20);
+        tfGia = new JTextField(20);
+        tfTacGia = new JTextField(20);
+        tfNxb = new JTextField(20);
+
+        gbc.gridx = 0; gbc.gridy = 0; pnForm.add(new JLabel("Mã sách"), gbc);
+        gbc.gridx = 1; pnForm.add(tfMa, gbc);
+        gbc.gridx = 2; pnForm.add(new JLabel("Tác giả"), gbc);
+        gbc.gridx = 3; pnForm.add(tfTacGia, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; pnForm.add(new JLabel("Tên sách"), gbc);
+        gbc.gridx = 1; pnForm.add(tfTen, gbc);
+        gbc.gridx = 2; pnForm.add(new JLabel("Nhà xuất bản"), gbc);
+        gbc.gridx = 3; pnForm.add(tfNxb, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; pnForm.add(new JLabel("Giá"), gbc);
+        gbc.gridx = 1; pnForm.add(tfGia, gbc);
+
+        tableModel = new DefaultTableModel(COLS, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scroll = new JScrollPane(table);
+        JScrollPane spTable = new JScrollPane(table);
+        spTable.setPreferredSize(new Dimension(750, 250));
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
-        JButton btThem = new JButton("Thêm");
-        JButton btXoa = new JButton("Xóa");
-        JButton btSua = new JButton("Sửa");
-        JButton btLuu = new JButton("Lưu");
-        JButton btTim = new JButton("Tìm");
-        JButton btClear = new JButton("Clear");
-        JButton btThoat = new JButton("Thoát");
-        buttons.add(btThem);
-        buttons.add(btXoa);
-        buttons.add(btSua);
-        buttons.add(btLuu);
-        buttons.add(btTim);
-        buttons.add(btClear);
-        buttons.add(btThoat);
+        JPanel pnCenter = new JPanel(new BorderLayout(10, 10));
+        pnCenter.add(pnForm, BorderLayout.NORTH);
+        pnCenter.add(spTable, BorderLayout.CENTER);
+        add(pnCenter, BorderLayout.CENTER);
 
+        JPanel pnButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        btThem = new JButton("Thêm");
+        btXoa = new JButton("Xóa");
+        btSua = new JButton("Sửa");
+        btLuu = new JButton("Lưu");
+        btTim = new JButton("Tìm");
+        btClear = new JButton("Clear");
+        btThoat = new JButton("Thoát");
+
+        pnButtons.add(btThem);
+        pnButtons.add(btXoa);
+        pnButtons.add(btSua);
+        pnButtons.add(btLuu);
+        pnButtons.add(btTim);
+        pnButtons.add(btClear);
+        pnButtons.add(btThoat);
+        add(pnButtons, BorderLayout.SOUTH);
+    }
+
+    private void initEvents() {
         btThem.addActionListener(e -> onThem());
         btXoa.addActionListener(e -> onXoa());
         btSua.addActionListener(e -> onSua());
@@ -78,234 +118,136 @@ public class Main extends JFrame {
         btClear.addActionListener(e -> onClear());
         btThoat.addActionListener(e -> System.exit(0));
 
-        JPanel center = new JPanel(new BorderLayout(8, 8));
-        center.add(form, BorderLayout.NORTH);
-        center.add(scroll, BorderLayout.CENTER);
-
-        add(header, BorderLayout.NORTH);
-        add(center, BorderLayout.CENTER);
-        add(buttons, BorderLayout.SOUTH);
-
-        syncTableFromDs();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(640, 420));
-        pack();
-        setLocationRelativeTo(null);
-    }
-
-    private JPanel buildFormPanel() {
-        JPanel p = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(4, 6, 4, 6);
-        c.anchor = GridBagConstraints.WEST;
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        c.gridx = 0;
-        c.gridy = 0;
-        p.add(new JLabel("Mã sách:"), c);
-        c.gridx = 1;
-        p.add(tfMa, c);
-        c.gridx = 2;
-        p.add(new JLabel("Tên sách:"), c);
-        c.gridx = 3;
-        p.add(tfTen, c);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        p.add(new JLabel("Giá:"), c);
-        c.gridx = 1;
-        p.add(tfGia, c);
-        c.gridx = 2;
-        p.add(new JLabel("Tác giả:"), c);
-        c.gridx = 3;
-        p.add(tfTacGia, c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        p.add(new JLabel("Nhà xuất bản:"), c);
-        c.gridx = 1;
-        c.gridwidth = 3;
-        p.add(tfNxb, c);
-        c.gridwidth = 1;
-
-        return p;
-    }
-
-    private void initMockData() {
-        themSachNoiBo("MS01", "ABC", 100000, "Nguyễn A", "XYZ");
-        themSachNoiBo("MS02", "Lập trình Java", 250000, "Trần B", "Kim Đồng");
-        themSachNoiBo("MS03", "Cấu trúc dữ liệu", 180000, "Lê C", "Giáo dục");
-        themSachNoiBo("MS04", "Cơ sở dữ liệu", 220000, "Phạm D", "Statistical");
-        themSachNoiBo("MS05", "Mạng máy tính", 195000, "Hoàng E", "BKHN");
-    }
-
-    private void themSachNoiBo(String ma, String ten, double gia, String tg, String nxb) {
-        Sach s = new Sach();
-        s.maSach = ma;
-        s.tenSach = ten;
-        s.gia = gia;
-        s.tacGia = tg;
-        s.nxb = nxb;
-        dsSach.ds.add(s);
-    }
-
-    private void syncTableFromDs() {
-        tableModel.setRowCount(0);
-        for (Sach s : dsSach.ds) {
-            tableModel.addRow(new Object[] { s.maSach, s.tenSach, s.tacGia, s.nxb, s.gia });
-        }
-    }
-
-    private Sach tiepXuLyNhap(boolean kiemTraTrungMa, Integer boQuaChiSoDong) {
-        String ma = tfMa.getText() != null ? tfMa.getText().trim() : "";
-        String ten = tfTen.getText() != null ? tfTen.getText().trim() : "";
-        String tg = tfTacGia.getText() != null ? tfTacGia.getText().trim() : "";
-        String nxb = tfNxb.getText() != null ? tfNxb.getText().trim() : "";
-        String giaStr = tfGia.getText() != null ? tfGia.getText().trim() : "";
-
-        if (ma.isEmpty() || ten.isEmpty() || tg.isEmpty() || nxb.isEmpty() || giaStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không được để trống bất kỳ ô nào.", "Lỗi",
-                    JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-
-        double gia;
-        try {
-            gia = Double.parseDouble(giaStr);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Giá phải là số hợp lệ.", "Lỗi",
-                    JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-
-        if (gia <= 0) {
-            JOptionPane.showMessageDialog(this, "Giá phải lớn hơn 0 (không âm, không bằng 0).", "Lỗi",
-                    JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-
-        if (kiemTraTrungMa && maTrung(ma, boQuaChiSoDong)) {
-            JOptionPane.showMessageDialog(this, "Mã sách đã tồn tại.", "Lỗi",
-                    JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-
-        Sach s = new Sach();
-        s.maSach = ma;
-        s.tenSach = ten;
-        s.gia = gia;
-        s.tacGia = tg;
-        s.nxb = nxb;
-        return s;
-    }
-
-    private boolean maTrung(String ma, Integer boQuaChiSoDong) {
-        for (int i = 0; i < dsSach.ds.size(); i++) {
-            if (boQuaChiSoDong != null && i == boQuaChiSoDong) {
-                continue;
+        table.getSelectionModel().addListSelectionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row != -1) {
+                fillForm(row);
             }
-            if (dsSach.ds.get(i).maSach.equals(ma)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void dienFormTuDong(int row) {
-        Sach s = dsSach.ds.get(row);
-        tfMa.setText(s.maSach);
-        tfTen.setText(s.tenSach);
-        tfGia.setText(String.valueOf(s.gia));
-        tfTacGia.setText(s.tacGia);
-        tfNxb.setText(s.nxb);
+        });
     }
 
     private void onThem() {
-        Sach s = tiepXuLyNhap(true, null);
-        if (s == null) {
+        String ma = tfMa.getText().trim();
+        String ten = tfTen.getText().trim();
+        String tg = tfTacGia.getText().trim();
+        String nxb = tfNxb.getText().trim();
+        String giaStr = tfGia.getText().trim();
+
+        if (ma.isEmpty() || ten.isEmpty() || tg.isEmpty() || nxb.isEmpty() || giaStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
-        dsSach.ds.add(s);
-        syncTableFromDs();
-        int last = tableModel.getRowCount() - 1;
-        table.getSelectionModel().setSelectionInterval(last, last);
+
+        try {
+            double gia = Double.parseDouble(giaStr);
+            Sach s = new Sach(ma, ten, tg, nxb, gia);
+            if (dsSach.themSach(s)) {
+                syncTable();
+                onClear();
+            } else {
+                JOptionPane.showMessageDialog(this, "Mã sách đã tồn tại!");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Giá phải là số!");
+        }
     }
 
     private void onXoa() {
         int row = table.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Chọn một dòng để xóa.", "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sách cần xóa!");
             return;
         }
-        dienFormTuDong(row);
-        if (tiepXuLyNhap(false, row) == null) {
-            return;
+        String ma = tableModel.getValueAt(row, 0).toString();
+        if (dsSach.xoaSach(ma)) {
+            syncTable();
+            onClear();
         }
-        dsSach.ds.remove(row);
-        syncTableFromDs();
-        clearFields();
     }
 
     private void onSua() {
         int row = table.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Chọn một dòng để sửa.", "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sách cần sửa!");
             return;
         }
-        dienFormTuDong(row);
-        if (tiepXuLyNhap(false, row) == null) {
-            return;
-        }
+        tfMa.setEditable(false);
     }
 
     private void onLuu() {
-        int row = table.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Chọn một dòng đang sửa rồi bấm Lưu.", "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
+        String ma = tfMa.getText().trim();
+        String ten = tfTen.getText().trim();
+        String tg = tfTacGia.getText().trim();
+        String nxb = tfNxb.getText().trim();
+        String giaStr = tfGia.getText().trim();
+
+        if (ma.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có mã sách để cập nhật!");
             return;
         }
-        Sach s = tiepXuLyNhap(true, row);
-        if (s == null) {
-            return;
+
+        try {
+            double gia = Double.parseDouble(giaStr);
+            Sach s = new Sach(ma, ten, tg, nxb, gia);
+            if (dsSach.capNhatSach(ma, s)) {
+                syncTable();
+                tfMa.setEditable(true);
+                onClear();
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy mã sách để cập nhật!");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Giá phải là số!");
         }
-        dsSach.ds.set(row, s);
-        syncTableFromDs();
-        table.getSelectionModel().setSelectionInterval(row, row);
     }
 
     private void onTim() {
-        Sach s = tiepXuLyNhap(false, null);
-        if (s == null) {
-            return;
-        }
-        for (int i = 0; i < dsSach.ds.size(); i++) {
-            if (dsSach.ds.get(i).maSach.equals(s.maSach)) {
-                table.getSelectionModel().setSelectionInterval(i, i);
-                table.scrollRectToVisible(table.getCellRect(i, 0, true));
-                return;
+        String ma = JOptionPane.showInputDialog(this, "Nhập mã sách cần tìm:");
+        if (ma != null && !ma.trim().isEmpty()) {
+            int index = dsSach.timSach(ma.trim());
+            if (index != -1) {
+                table.setRowSelectionInterval(index, index);
+                table.scrollRectToVisible(table.getCellRect(index, 0, true));
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy sách có mã " + ma);
             }
         }
-        JOptionPane.showMessageDialog(this, "Không tìm thấy mã: " + s.maSach, "Kết quả",
-                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void onClear() {
-        clearFields();
+        tfMa.setText("");
+        tfTen.setText("");
+        tfTacGia.setText("");
+        tfNxb.setText("");
+        tfGia.setText("");
+        tfMa.setEditable(true);
         table.clearSelection();
     }
 
-    private void clearFields() {
-        tfMa.setText("");
-        tfTen.setText("");
-        tfGia.setText("");
-        tfTacGia.setText("");
-        tfNxb.setText("");
+    private void fillForm(int row) {
+        tfMa.setText(tableModel.getValueAt(row, 0).toString());
+        tfTen.setText(tableModel.getValueAt(row, 1).toString());
+        tfTacGia.setText(tableModel.getValueAt(row, 2).toString());
+        tfNxb.setText(tableModel.getValueAt(row, 3).toString());
+        tfGia.setText(tableModel.getValueAt(row, 4).toString());
+    }
+
+    private void syncTable() {
+        tableModel.setRowCount(0);
+        for (Sach s : dsSach.getDs()) {
+            tableModel.addRow(new Object[] {
+                s.getMaSach(), s.getTenSach(), s.getTacGia(), s.getNxb(), s.getGia()
+            });
+        }
+    }
+
+    private void initMockData() {
+        dsSach.themSach(new Sach("MS01", "ABC", "Nguyễn A", "XYZ", 100000));
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            new Main().setVisible(true);
+        });
     }
 }

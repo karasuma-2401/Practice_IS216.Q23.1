@@ -1,9 +1,4 @@
-package Lab2.Lab2_JavaOOP.Lab2_JavaOOP.Exercise2V.1.Lab2.Exercise2V;
-
-/**
- * Lop TestQuanLySieuThi - Chuong trinh kiem tra chuc nang
- * Tu dong them mot so hang hoa mau de kiem tra
- */
+package Lab2.Exercise2V;
 public class TestQuanLySieuThi {
     public static void main(String[] args) {
         System.out.println("========== TEST QUAN LY SIEU THI ABC ==========");

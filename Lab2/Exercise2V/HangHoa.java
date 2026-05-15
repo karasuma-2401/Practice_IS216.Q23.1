@@ -1,4 +1,4 @@
-package Lab2_JavaOOP.Exercise2V;
+package Lab2.Exercise2V;
 
 public abstract class HangHoa {
     protected String maHang;

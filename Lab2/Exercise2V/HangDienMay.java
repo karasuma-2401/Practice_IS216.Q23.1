@@ -1,4 +1,4 @@
-package Lab2.Lab2_JavaOOP.Exercise2V;
+package Lab2.Exercise2V;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
